@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do_app/pages/home.dart';
 import 'package:to_do_app/pages/cadastro.dart';
-import 'package:to_do_app/providers/UserProvider.dart';
+import 'package:to_do_app/providers/users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:flutter/services.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,10 +17,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final LocalAuthentication _localAuth = LocalAuthentication();
 
   void _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
+
+    if(username.trim() == '' || password.trim() == ''){
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Nome de usuário ou senha não podem ser vazios')));
+      return;
+    }
 
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
@@ -34,6 +44,42 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Usuário ou senha inválidos')));
+    }
+
+  }
+
+  Future<void> _authenticateWithBiometrics() async {
+    bool canAuthenticateWithBiometrics = await _localAuth.canCheckBiometrics;
+    bool canAuthenticate = canAuthenticateWithBiometrics || await _localAuth.isDeviceSupported();
+
+    if (!canAuthenticate) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Autenticação biométrica não suportada neste dispositivo.'),
+      ));
+      return;
+    }
+
+    bool isAuthenticated = false;
+    try {
+      isAuthenticated = await _localAuth.authenticate(
+        localizedReason: 'Autentique-se para acessar o aplicativo',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+        ),
+      );
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    if (isAuthenticated) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Falha na autenticação biométrica.'),
+      ));
     }
   }
 
@@ -88,14 +134,29 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.lock),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 30),
+                ElevatedButton.icon(
+                  onPressed: _authenticateWithBiometrics,
+                  icon: Icon(Icons.fingerprint, color: Colors.black),
+                  label: Text('Login com Biometria', style: TextStyle(color: Colors.black)),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    minimumSize: Size(MediaQuery.of(context).size.width - 20, 0),
+                    backgroundColor: Colors.grey[200],
+                  ),
+                ),
+                SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    minimumSize: Size(MediaQuery.of(context).size.width - 20, 0),
                     backgroundColor: Colors.black,
                   ),
                   child: Text(
@@ -108,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: _goToCadastroPage,
                   child: Text(
                     'Criar uma conta',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style: TextStyle(fontSize: 16, color: Colors.black38),
                   ),
                 ),
               ],

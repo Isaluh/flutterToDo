@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do_app/pages/home.dart';
 import 'package:to_do_app/pages/login.dart';
-import 'package:to_do_app/providers/UserProvider.dart';
+import 'package:to_do_app/providers/users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -22,6 +22,13 @@ class _CadastroPageState extends State<CadastroPage> {
     final username = _usernameController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
+
+    if(username.trim() == "" || password.trim() == "" || confirmPassword == ""){
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Há campos em branco.')));
+      return;
+    }
 
     if (password != confirmPassword) {
       ScaffoldMessenger.of(
@@ -55,7 +62,7 @@ class _CadastroPageState extends State<CadastroPage> {
       body: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height / 2,
+            height: MediaQuery.of(context).size.height / 2.5,
             decoration: BoxDecoration(
               color: Colors.black,
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
@@ -72,7 +79,7 @@ class _CadastroPageState extends State<CadastroPage> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height / 2,
+            height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 2.5,
             padding: EdgeInsets.all(20),
             color: Colors.white,
             child: Column(
@@ -101,18 +108,19 @@ class _CadastroPageState extends State<CadastroPage> {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Confirmar Senha',
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: Icon(Icons.lock_reset_rounded),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 30),
 
                 ElevatedButton(
                   onPressed: _cadastrar,
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    minimumSize: Size(MediaQuery.of(context).size.width - 20, 0),
                     backgroundColor: Colors.black,
                   ),
                   child: Text(
@@ -126,7 +134,7 @@ class _CadastroPageState extends State<CadastroPage> {
                   onTap: _goToLoginPage,
                   child: Text(
                     'Ja tem conta?',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style: TextStyle(fontSize: 16, color: Colors.black38),
                   ),
                 ),
               ],

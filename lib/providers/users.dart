@@ -1,3 +1,5 @@
+// O Provider ajuda a gerenciar o estado da sua aplicação e permite que você compartilhe objetos ou dados entre widgets sem precisar passar esses dados explicitamente de um widget para outro através de construtores.
+
 import 'package:flutter/material.dart';
 
 class User {

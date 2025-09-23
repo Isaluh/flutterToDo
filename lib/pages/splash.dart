@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:to_do_app/pages/login.dart';
 import 'package:to_do_app/pages/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do_app/pages/on_boarding.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
     });
   }
 
-  Future<void> _checkLoginStatus(BuildContext context) async {
+  Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     print(isLoggedIn);
@@ -41,7 +41,7 @@ class _SplashPageState extends State<SplashPage> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => OnboardingPage()),
       );
     }
   }
@@ -85,17 +85,17 @@ class _SplashPageState extends State<SplashPage> {
               left: 20,
               right: 20,
               child: ElevatedButton(
-                onPressed: () => _checkLoginStatus(context),
+                onPressed: () => _checkLoginStatus(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                 ),
                 child: Text(
                   "Continuar",
-                  style: TextStyle(fontSize: 18, color: Colors.black),
+                  style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
               ),
             ),
