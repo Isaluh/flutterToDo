@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do_app/components/botoes.dart';
 import 'package:to_do_app/pages/cadastro.dart';
 import 'package:to_do_app/pages/login.dart';
-import 'home.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -131,56 +130,23 @@ class OnboardingPageState extends State<OnboardingPage> {
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: ElevatedButton(
-                        onPressed: _previousPage,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                        child: Text("Voltar", style: TextStyle(color: Colors.black)),
-                      ),
+                      child: ElevatedButtonComponent(onPressed: _previousPage, text: 'Voltar', color: Colors.white, textColor: Colors.black, fontSize: 14,),
                     ),
                   ),
                 if (_currentPage < _onboardingData.length - 1)
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: _nextPage,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                        child: Text("Avançar", style: TextStyle(color: Colors.black)),
-                      ),
+                      child: ElevatedButtonComponent(onPressed: _nextPage, text: 'Avançar', color: Colors.white, textColor: Colors.black, fontSize: 14,),
                     ),
                   ),
                 if (_currentPage == _onboardingData.length - 1)
                   Expanded(
                     child: Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            minimumSize: Size(double.infinity, 40),
-                          ),
-                          child: Text("Login", style: TextStyle(color: Colors.black)),
-                        ),
+                        ElevatedButtonComponent(onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage())), text: 'Login', color: Colors.white, textColor: Colors.black, minimumSize: Size(double.infinity, 40), fontSize: 14,),
                         SizedBox(height: 5),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CadastroPage()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            minimumSize: Size(double.infinity, 40),
-                          ),
-                          child: Text("Cadastrar", style: TextStyle(color: Colors.white)),
-                        ),
+                        ElevatedButtonComponent(onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CadastroPage())), text: 'Cadastrar', minimumSize: Size(double.infinity, 40), fontSize: 14,),
                       ],
                     ),
                   ),

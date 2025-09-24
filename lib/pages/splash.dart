@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_do_app/components/botoes.dart';
 import 'dart:async';
 import 'package:to_do_app/pages/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,20 +85,7 @@ class _SplashPageState extends State<SplashPage> {
               bottom: 20,
               left: 20,
               right: 20,
-              child: ElevatedButton(
-                onPressed: () => _checkLoginStatus(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                ),
-                child: Text(
-                  "Continuar",
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                ),
-              ),
+              child: ElevatedButtonComponent(onPressed: () => _checkLoginStatus(), text: 'Continuar', borderRadius: const BorderRadius.all(Radius.circular(10)), color: Colors.white, textColor: Colors.black,),
             ),
         ],
       ),

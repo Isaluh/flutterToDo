@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:to_do_app/components/botoes.dart';
 import 'package:to_do_app/pages/home.dart';
 import 'package:to_do_app/pages/login.dart';
 import 'package:to_do_app/providers/users.dart';
@@ -112,22 +113,7 @@ class _CadastroPageState extends State<CadastroPage> {
                   ),
                 ),
                 SizedBox(height: 30),
-
-                ElevatedButton(
-                  onPressed: _cadastrar,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    minimumSize: Size(MediaQuery.of(context).size.width - 20, 0),
-                    backgroundColor: Colors.black,
-                  ),
-                  child: Text(
-                    'Cadastrar',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
+                ElevatedButtonComponent(onPressed: _cadastrar, text: 'Cadastrar', color: Colors.black, textColor: Colors.white, minimumSize: Size(double.infinity, 40),),
                 SizedBox(height: 20),
 
                 GestureDetector(

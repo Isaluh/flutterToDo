@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:to_do_app/components/botoes.dart';
 import 'package:to_do_app/pages/home.dart';
 import 'package:to_do_app/pages/cadastro.dart';
 import 'package:to_do_app/providers/users.dart';
@@ -135,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 30),
+                // COLOCAR COMPONENTZAÇÃO
                 ElevatedButton.icon(
                   onPressed: _authenticateWithBiometrics,
                   icon: Icon(Icons.fingerprint, color: Colors.black),
@@ -149,21 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 5),
-                ElevatedButton(
-                  onPressed: _login,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    minimumSize: Size(MediaQuery.of(context).size.width - 20, 0),
-                    backgroundColor: Colors.black,
-                  ),
-                  child: Text(
-                    'Entrar',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
+                ElevatedButtonComponent(onPressed: _login, text: 'Entrar', color: Colors.black, textColor: Colors.white, minimumSize: Size(double.infinity, 40),),
                 SizedBox(height: 20),
                 GestureDetector(
                   onTap: _goToCadastroPage,
