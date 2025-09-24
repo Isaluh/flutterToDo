@@ -85,7 +85,7 @@ class _SplashPageState extends State<SplashPage> {
               bottom: 20,
               left: 20,
               right: 20,
-              child: ElevatedButtonComponent(onPressed: () => _checkLoginStatus(), text: 'Continuar', borderRadius: const BorderRadius.all(Radius.circular(10)), color: Colors.white, textColor: Colors.black,),
+              child: ElevatedButtonComponent(onPressed: () => _checkLoginStatus(), text: 'Continuar', color: Colors.white, textColor: Colors.black,),
             ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do_app/components/botoes.dart';
 import 'package:to_do_app/pages/login.dart';
 
 class HomePage extends StatelessWidget {
@@ -8,7 +9,7 @@ class HomePage extends StatelessWidget {
   void _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', false);
-    
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -20,58 +21,61 @@ class HomePage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.grey[850], 
+          backgroundColor: Colors.grey[850],
           title: const Text(
             'Categorias',
             style: TextStyle(color: Colors.white),
             textAlign: TextAlign.center,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(10)
+            borderRadius: BorderRadiusGeometry.circular(10),
           ),
-          content: SizedBox(
-            width: double.maxFinite,
+          content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 GridView.count(
-                  shrinkWrap: true, 
-                  crossAxisCount: 3, 
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 3,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
                   children: [
-                    _buildCategoryIcon(Icons.shopping_bag, Colors.orange, 'Grocery'),
+                    _buildCategoryIcon(
+                      Icons.shopping_bag,
+                      Colors.orange,
+                      'Grocery',
+                    ),
                     _buildCategoryIcon(Icons.work, Colors.blue, 'Work'),
-                    _buildCategoryIcon(Icons.directions_run, Colors.green, 'Sport'),
-                    _buildCategoryIcon(Icons.design_services, Colors.purple, 'Design'),
-                    // _buildCategoryIcon(Icons.school, Colors.brown, 'University'),
-                    // _buildCategoryIcon(Icons.campaign, Colors.pink, 'Social'),
-                    // _buildCategoryIcon(Icons.music_note, Colors.cyan, 'Music'),
-                    // _buildCategoryIcon(Icons.favorite, Colors.red, 'Health'),
-                    // _buildCategoryIcon(Icons.movie, Colors.yellow, 'Movie'),
-                    // _buildCategoryIcon(Icons.home, Colors.teal, 'Home'),
-                    // _buildCategoryIcon(Icons.add_circle, Colors.grey, 'Create New', isNew: true),
+                    _buildCategoryIcon(
+                      Icons.directions_run,
+                      Colors.green,
+                      'Sport',
+                    ),
+                    _buildCategoryIcon(
+                      Icons.design_services,
+                      Colors.purple,
+                      'Design',
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigator.of(context).pop();
-                    // ir pra tela de criar categoria
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(10)
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                  ),
-                  child: const Text(
-                    'Criar categoria',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {},
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: Colors.white,
+                //     minimumSize: const Size(double.infinity, 0),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadiusGeometry.circular(10),
+                //     ),
+                //     padding: EdgeInsets.symmetric(vertical: 10),
+                //   ),
+                //   child: const Text(
+                //     'Criar categoria',
+                //     style: TextStyle(color: Colors.black),
+                //   ),
+                // ),
+                ElevatedButtonComponent(onPressed: () => {}, text: 'Criar categoria', color: Colors.white, textColor: Colors.black, minimumSize: Size(double.infinity, 0),),
               ],
             ),
           ),
@@ -104,7 +108,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black, 
+        backgroundColor: Colors.black,
         leading: IconButton(
           icon: const Icon(Icons.new_label_outlined, color: Colors.white),
           onPressed: () => _showCategoryModal(context),
@@ -114,10 +118,10 @@ class HomePage extends StatelessWidget {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 20
+            fontSize: 20,
           ),
         ),
-        centerTitle: true, 
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
@@ -137,10 +141,14 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 15),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text("Nada ainda por aqui. \nCrie sua tarefa clicando no botão +", style: TextStyle(color: Colors.black54), textAlign: TextAlign.center),
-            )
+              child: Text(
+                "Nada ainda por aqui. \nCrie sua tarefa clicando no botão +",
+                style: TextStyle(color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
-        )
+        ),
       ),
       floatingActionButton: Stack(
         children: [
@@ -156,7 +164,7 @@ class HomePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
               mini: true,
-              child: const Icon(Icons.add, color: Colors.white), 
+              child: const Icon(Icons.add, color: Colors.white),
             ),
           ),
         ],
