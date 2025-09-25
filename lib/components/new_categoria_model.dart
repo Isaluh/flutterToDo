@@ -1,35 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do_app/components/botoes.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:to_do_app/providers/categorias.dart';
+import 'package:to_do_app/providers/persistencia/categoria.dart';
 
 class ModalCriarCategoria extends StatefulWidget {
-  const ModalCriarCategoria({super.key});
+  final Categoria? categoriaParaEditar; 
+
+  const ModalCriarCategoria({super.key, this.categoriaParaEditar});
 
   @override
   State<ModalCriarCategoria> createState() => _ModalCriarCategoriaState();
 }
 
 class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
-  Color _pickedColor = Colors.black;
-  IconData? _pickedIcon = Icons.folder;
+  late TextEditingController _nomeCategoriaController; 
+  late Color _pickedColor;
+  late Icon _icon;
+  
+  bool get isEditing => widget.categoriaParaEditar != null; 
 
-  void _showIconPicker() async {
-    // nao esta aparecendo icon
-    final pickedIcon = await showIconPicker(
-      context,
-      configuration: SinglePickerConfiguration(
-        iconPackModes: [IconPack.allMaterial],
-      )
+  @override
+  void initState() {
+    super.initState();
+    print("--- INITI STATE EXECUTADO ---"); 
+
+    _nomeCategoriaController = TextEditingController();
+    _pickedColor = Colors.black;
+    _icon = const Icon(Icons.folder);
+    
+    if (isEditing) {
+      print("Modo Edição Ativado!");
+      final categoria = widget.categoriaParaEditar!;
+      _nomeCategoriaController.text = categoria.name;
+      _pickedColor = categoria.color;
+      _icon = Icon(categoria.icon);
+    }
+  }
+
+  _pickIcon() async {
+    IconPickerIcon? icon = await showIconPicker(
+        context,
+        configuration: SinglePickerConfiguration(
+          iconPackModes: [IconPack.allMaterial],
+        ),
     );
 
-    if (pickedIcon != null) {
-      setState(() {
-        _pickedIcon = pickedIcon as IconData?;
-      });
-      debugPrint('Ícone selecionado: $_pickedIcon');
-    }
+    _icon = (icon != null) 
+      ? Icon(icon.data) 
+      : Icon(Icons.folder); 
+
+    setState(() {});
   }
 
   void _showColorPicker() {
@@ -61,6 +85,45 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
     );
   }
 
+  void _salvarCategoria(){
+    final String nome = _nomeCategoriaController.text.trim();
+    final IconData? iconeData = _icon?.icon;
+    final Color cor = _pickedColor;
+
+    if (nome.isEmpty || iconeData == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos.')),
+      );
+      return;
+    }
+
+    try {
+      if (isEditing) {
+        // Ex: Provider.of<CategoriaProvider>(context, listen: false).updateCategoria(dados...);
+      } else {
+        Provider.of<CategoriaProvider>(context, listen: false).addCategoria(nome, iconeData, cor);
+      }
+      Navigator.of(context).pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao salvar categoria.')),
+      );
+    }
+  }
+
+  void _excluirCategoria() {
+    if (!isEditing) return;
+
+    Provider.of<CategoriaProvider>(context, listen: false).removeCategoria(widget.categoriaParaEditar!);
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void dispose() {
+    _nomeCategoriaController.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -83,8 +146,8 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
           ),
           const SizedBox(height: 20),
           const Text('Nome:', style: TextStyle(color: Colors.white70)),
-          const TextField(
-            decoration: InputDecoration(
+          TextField(
+            decoration: const InputDecoration(
               hintText: 'Compras',
               hintStyle: TextStyle(color: Colors.grey),
               enabledBorder: UnderlineInputBorder(
@@ -94,12 +157,13 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
                 borderSide: BorderSide(color: Colors.white),
               ),
             ),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
+            controller: _nomeCategoriaController,
           ),
           const SizedBox(height: 20),
           const Text('Icone:', style: TextStyle(color: Colors.white70)),
           ElevatedButton(
-            onPressed: _showIconPicker, 
+            onPressed: _pickIcon, 
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.grey[850],
               iconColor: Colors.white
@@ -107,7 +171,7 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(_pickedIcon),
+                _icon!,
                 const SizedBox(width: 8),
                 const Text('Escolha um ícone', style: TextStyle(color: Colors.white),),
               ],
@@ -132,19 +196,22 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
               ),
             ),
           ),
+          const SizedBox(height: 20),
+          if(isEditing)
+          ElevatedButtonComponent(onPressed: _excluirCategoria, text: 'Excluir categoria', color: Colors.red,),
           const Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButtonComponent(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => {Navigator.pop(context), print(Provider.of<CategoriaProvider>(context, listen: false).categories)},
                 text: 'Cancelar',
                 color: Colors.transparent,
                 textColor: Colors.white,
               ),
               // chamar o criar
               ElevatedButtonComponent(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => _salvarCategoria(),
                 text: 'Salvar',
                 color: Colors.white,
                 textColor: Colors.black,
@@ -155,14 +222,4 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
       ),
     );
   }
-  
-  // CASO VOLTE PRA IDEIA DAS BOLINHAS
-  // Widget _buildColorCircle(Color color) {
-  //   return Container(
-  //     margin: const EdgeInsets.symmetric(horizontal: 5),
-  //     width: 24,
-  //     height: 24,
-  //     decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-  //   );
-  // }
 }

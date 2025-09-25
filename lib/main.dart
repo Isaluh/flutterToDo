@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; 
 import 'package:to_do_app/pages/splash.dart';
 import 'package:to_do_app/providers/categorias.dart';
+import 'package:to_do_app/providers/persistencia/categoria.dart';
+import 'package:to_do_app/providers/persistencia/user.dart';
 import 'package:to_do_app/providers/users.dart'; 
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(UserAdapter()); 
+  Hive.registerAdapter(CategoriaAdapter());
+  
   runApp(const MyApp());
 }
 

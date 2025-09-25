@@ -1,6 +1,7 @@
 // O Provider ajuda a gerenciar o estado da sua aplicação e permite que você compartilhe objetos ou dados entre widgets sem precisar passar esses dados explicitamente de um widget para outro através de construtores.
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class User {
   String username;
@@ -10,14 +11,32 @@ class User {
 }
 
 class UserProvider with ChangeNotifier {
-  final List<User> _users = [
-    User(username: 'heloisa', password: '12345'),
-  ];
+  List<User> _users = [];
+  late Box<User> _userBox;
+
+  UserProvider() {
+    _initHive();
+  }
+
+  Future<void> _initHive() async {
+    _userBox = await Hive.openBox<User>('users');
+    _users = _userBox.values.toList();
+    
+    if (_users.isEmpty) {
+       final initialUser = User(username: 'admin', password: '12345');
+       _userBox.add(initialUser);
+       _users.add(initialUser);
+    }
+    
+    notifyListeners();
+  }
 
   List<User> get users => _users;
 
   void addUser(String username, String password) {
-    _users.add(User(username: username, password: password));
+    final newUser = User(username: username, password: password);
+    _userBox.add(newUser);
+    _users.add(newUser);
     notifyListeners();
   }
 

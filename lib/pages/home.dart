@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_app/components/categoria_modal.dart';
 import 'package:to_do_app/components/new_categoria_model.dart';
 import 'package:to_do_app/pages/login.dart';
+import 'package:to_do_app/providers/persistencia/categoria.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,17 +28,28 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return ModalCategoria(buttonNewCategoria: showButton, onPressedNewCategory: () => _showCreateCategoryModal(context),);
+        return ModalCategoria(
+          buttonNewCategoria: showButton, 
+          onPressedNewCategory: () => _showCreateCategoryModal(context),
+          onEditCategory: (categoria) {
+            _showCreateCategoryModal(context, categoria: categoria);
+          },);
       },
-    );
+    ).then((result) {
+        if (!showButton && result is Categoria) {
+            print('Categoria selecionada: ${result.name}');
+        }
+    });
   }
 
-  void _showCreateCategoryModal(BuildContext context) {
+  void _showCreateCategoryModal(BuildContext context, {Categoria? categoria}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return const ModalCriarCategoria();
+        return ModalCriarCategoria(
+        categoriaParaEditar: categoria,
+      );
       },
     );
   }
