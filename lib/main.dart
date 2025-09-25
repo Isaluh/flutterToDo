@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; 
 import 'package:to_do_app/pages/splash.dart';
+import 'package:to_do_app/providers/categorias.dart';
 import 'package:to_do_app/providers/users.dart'; 
 
 void main() {
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(  
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()), 
+        ChangeNotifierProvider(create: (context) => CategoriaProvider()), 
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
