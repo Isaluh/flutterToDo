@@ -20,28 +20,57 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
   late TextEditingController _nomeCategoriaController; 
   late Color _pickedColor;
   late Icon _icon;
+  String _titulo = "Crie uma nova categoria"; 
   
   bool get isEditing => widget.categoriaParaEditar != null; 
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    print("--- INITI STATE EXECUTADO ---"); 
 
     _nomeCategoriaController = TextEditingController();
     _pickedColor = Colors.black;
     _icon = const Icon(Icons.folder);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     
-    if (isEditing) {
-      print("Modo Edição Ativado!");
-      final categoria = widget.categoriaParaEditar!;
-      _nomeCategoriaController.text = categoria.name;
-      _pickedColor = categoria.color;
-      _icon = Icon(categoria.icon);
+    if (!_isInitialized && isEditing) {
+      _initializeFieldsForEditing();
+      _isInitialized = true;
     }
   }
 
-  _pickIcon() async {
+  @override
+  void didUpdateWidget(covariant ModalCriarCategoria oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.categoriaParaEditar != oldWidget.categoriaParaEditar) {
+      if (isEditing) {
+        _initializeFieldsForEditing();
+      } else {
+        _nomeCategoriaController.text = '';
+        _pickedColor = Colors.black;
+        _icon = const Icon(Icons.folder);
+        _titulo = "Crie uma nova categoria"; 
+      }
+      setState(() {});
+    }
+  }
+
+  void _initializeFieldsForEditing() {
+    final categoria = widget.categoriaParaEditar!;
+    
+    _nomeCategoriaController.text = categoria.name;
+    _pickedColor = categoria.color;
+    _icon = Icon(categoria.icon);
+    _titulo = "Editar categoria";
+  }
+
+  Future<void> _pickIcon() async {
     IconPickerIcon? icon = await showIconPicker(
         context,
         configuration: SinglePickerConfiguration(
@@ -99,7 +128,13 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
 
     try {
       if (isEditing) {
-        // Ex: Provider.of<CategoriaProvider>(context, listen: false).updateCategoria(dados...);
+        final categoriaAntiga = widget.categoriaParaEditar!;
+        final categoriaAtualizada = Categoria.create(
+          name: nome,
+          icon: iconeData,
+          color: cor,
+        );
+        Provider.of<CategoriaProvider>(context, listen: false).updateCategoria(categoriaAntiga, categoriaAtualizada);
       } else {
         Provider.of<CategoriaProvider>(context, listen: false).addCategoria(nome, iconeData, cor);
       }
@@ -136,8 +171,8 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Crie uma nova categoria',
+          Text(
+            _titulo,
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -203,13 +238,15 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ElevatedButtonComponent(
-                onPressed: () => {Navigator.pop(context), print(Provider.of<CategoriaProvider>(context, listen: false).categories)},
-                text: 'Cancelar',
-                color: Colors.transparent,
-                textColor: Colors.white,
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); 
+                },
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
               ),
-              // chamar o criar
               ElevatedButtonComponent(
                 onPressed: () => _salvarCategoria(),
                 text: 'Salvar',

@@ -24,7 +24,9 @@ class _CadastroPageState extends State<CadastroPage> {
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
-    if(username.trim() == "" || password.trim() == "" || confirmPassword == ""){
+    if (username.trim() == "" ||
+        password.trim() == "" ||
+        confirmPassword == "") {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Há campos em branco.')));
@@ -39,6 +41,14 @@ class _CadastroPageState extends State<CadastroPage> {
     }
 
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    if (userProvider.users.any((user) => user.username == username)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Este nome de usuário já está em uso.')),
+      );
+      return;
+    }
+
     userProvider.addUser(username, password);
 
     final prefs = await SharedPreferences.getInstance();
@@ -80,7 +90,9 @@ class _CadastroPageState extends State<CadastroPage> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 2.5,
+            height:
+                MediaQuery.of(context).size.height -
+                MediaQuery.of(context).size.height / 2.5,
             padding: EdgeInsets.all(20),
             color: Colors.white,
             child: Column(
@@ -113,7 +125,13 @@ class _CadastroPageState extends State<CadastroPage> {
                   ),
                 ),
                 SizedBox(height: 30),
-                ElevatedButtonComponent(onPressed: _cadastrar, text: 'Cadastrar', color: Colors.black, textColor: Colors.white, minimumSize: Size(double.infinity, 40),),
+                ElevatedButtonComponent(
+                  onPressed: _cadastrar,
+                  text: 'Cadastrar',
+                  color: Colors.black,
+                  textColor: Colors.white,
+                  minimumSize: Size(double.infinity, 40),
+                ),
                 SizedBox(height: 20),
 
                 GestureDetector(

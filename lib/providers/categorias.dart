@@ -27,6 +27,26 @@ class CategoriaProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateCategoria(Categoria categoriaAntiga, Categoria categoriaAtualizada) {
+    final index = _categorias.indexOf(categoriaAntiga);
+
+    if (index != -1) {
+      _categorias[index] = categoriaAtualizada;
+      _categoriasBox.putAt(index, categoriaAtualizada);
+
+      notifyListeners();
+    } else {
+      final indexByName = _categorias.indexWhere((c) => c.name == categoriaAntiga.name && c.color == categoriaAntiga.color);
+      if (indexByName != -1) {
+          _categorias[indexByName] = categoriaAtualizada;
+          _categoriasBox.putAt(indexByName, categoriaAtualizada);
+          notifyListeners();
+      } else {
+          print("Erro: Categoria não encontrada para atualização.");
+      }
+    }
+  }
+
   void removeCategoria(Categoria categoria) {
     final index = _categorias.indexOf(categoria);
     

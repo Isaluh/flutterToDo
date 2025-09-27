@@ -1,4 +1,3 @@
-// providers/persistencia/categoria.dart
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart'; 
 part 'categoria.g.dart';

@@ -9,24 +9,17 @@ class ModalCategoria extends StatelessWidget {
     super.key,
     required this.buttonNewCategoria,
     required this.onPressedNewCategory,
-    this.onEditCategory, 
   });
 
   final bool buttonNewCategoria;
   final VoidCallback onPressedNewCategory;
-  final void Function(Categoria)? onEditCategory; 
 
   Widget _buildCategoryIcon(BuildContext context, Categoria categoria) {
     return Column(
       children: [
         InkWell(
           onTap: () {
-            if (buttonNewCategoria) {
-              onEditCategory?.call(categoria); 
-              Navigator.of(context).pop(); 
-            } else {
-              Navigator.of(context).pop(categoria); 
-            }
+            Navigator.of(context).pop(categoria); 
           },
           child: Container(
             width: 40,
@@ -87,7 +80,7 @@ class ModalCategoria extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
             const SizedBox(height: 20),
-            if (buttonNewCategoria)
+            buttonNewCategoria ?
               ElevatedButtonComponent(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -97,6 +90,16 @@ class ModalCategoria extends StatelessWidget {
                 color: Colors.white,
                 textColor: Colors.black,
                 minimumSize: const Size(double.infinity, 0),
+              )
+            :
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(null); 
+                },
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
               ),
           ],
         ),
