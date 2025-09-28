@@ -26,6 +26,9 @@ class Task extends HiveObject {
   @HiveField(6)
   Categoria? category;
 
+  @HiveField(7) 
+  String userId; 
+
   Task({
     required this.title,
     this.description = '',
@@ -34,6 +37,7 @@ class Task extends HiveObject {
     required this.createdAt,
     this.dueDate,
     this.category,
+    required this.userId,
   });
 
   Task.create({
@@ -42,6 +46,7 @@ class Task extends HiveObject {
     this.priority = 0,
     this.dueDate,
     this.category,
+    required this.userId,
   }) : isDone = false,
        createdAt = DateTime.now();
 

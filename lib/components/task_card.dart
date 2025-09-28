@@ -51,7 +51,7 @@ class TaskCard extends StatelessWidget {
                 child: Icon(
                   task.isDone ? Icons.check_circle : Icons.circle_outlined,
                   color: task.isDone ? Colors.green.shade400 : Colors.white54,
-                  size: 15,
+                  size: 18,
                 ),
               ),
             ),

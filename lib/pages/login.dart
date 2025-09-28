@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:to_do_app/components/botoes.dart';
 import 'package:to_do_app/pages/home.dart';
 import 'package:to_do_app/pages/cadastro.dart';
+import 'package:to_do_app/providers/categorias.dart';
+import 'package:to_do_app/providers/tasks.dart';
 import 'package:to_do_app/providers/users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:local_auth/local_auth.dart';
@@ -32,8 +34,15 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final categoriaProvider = Provider.of<CategoriaProvider>(context, listen: false);
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
 
-    if (userProvider.validateUser(username, password)) {
+    if (userProvider.login(username, password)) {
+      final currentUserId = userProvider.currentUser!.id;
+    
+      categoriaProvider.loadCategoriasForUser(currentUserId);
+      taskProvider.loadTasksForUser(currentUserId);
+
       final prefs = await SharedPreferences.getInstance();
       prefs.setBool('isLoggedIn', true);
 
@@ -94,76 +103,77 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height / 2,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-            ),
-            child: Center(
-              child: Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 2,
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+              ),
+              child: Center(
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.all(20),
-            color: Colors.white,
-            height: MediaQuery.of(context).size.height / 2,
-            child: Column(
-              children: [
-                TextField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Usuário',
-                    prefixIcon: Icon(Icons.person),
-                  ),
-                ),
-                SizedBox(height: 15),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Senha',
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                ),
-                SizedBox(height: 30),
-                // COLOCAR COMPONENTZAÇÃO
-                ElevatedButton.icon(
-                  onPressed: _authenticateWithBiometrics,
-                  icon: Icon(Icons.fingerprint, color: Colors.black),
-                  label: Text('Login com Biometria', style: TextStyle(color: Colors.black)),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.white,
+              height: MediaQuery.of(context).size.height / 2,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'Usuário',
+                      prefixIcon: Icon(Icons.person),
                     ),
-                    minimumSize: Size(MediaQuery.of(context).size.width - 20, 0),
-                    backgroundColor: Colors.grey[200],
                   ),
-                ),
-                SizedBox(height: 5),
-                ElevatedButtonComponent(onPressed: _login, text: 'Entrar', color: Colors.black, textColor: Colors.white, minimumSize: Size(double.infinity, 40),),
-                SizedBox(height: 20),
-                GestureDetector(
-                  onTap: _goToCadastroPage,
-                  child: Text(
-                    'Criar uma conta',
-                    style: TextStyle(fontSize: 16, color: Colors.black38),
+                  SizedBox(height: 15),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Senha',
+                      prefixIcon: Icon(Icons.lock),
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 30),
+                  ElevatedButton.icon(
+                    onPressed: _authenticateWithBiometrics,
+                    icon: Icon(Icons.fingerprint, color: Colors.black),
+                    label: Text('Login com Biometria', style: TextStyle(color: Colors.black)),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: Size(MediaQuery.of(context).size.width - 20, 0),
+                      backgroundColor: Colors.grey[200],
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  ElevatedButtonComponent(onPressed: _login, text: 'Entrar', color: Colors.black, textColor: Colors.white, minimumSize: Size(double.infinity, 40),),
+                  SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: _goToCadastroPage,
+                    child: Text(
+                      'Criar uma conta',
+                      style: TextStyle(fontSize: 16, color: Colors.black38),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:to_do_app/components/priority_modal.dart';
 import 'package:to_do_app/providers/persistencia/categoria.dart';
 import 'package:to_do_app/providers/persistencia/task.dart';
 import 'package:to_do_app/providers/tasks.dart';
+import 'package:to_do_app/providers/users.dart';
 
 class ModalCriarTask extends StatefulWidget {
   final Task? taskToEdit;
@@ -154,12 +155,14 @@ class _ModalCriarTaskState extends State<ModalCriarTask> {
     }
 
     try {
+      final usuario = Provider.of<UserProvider>(context, listen: false).currentUser?.id;
       Provider.of<TaskProvider>(context, listen: false).addTask(
         title: title,
         description: description,
         priority: _priority,
         dueDate: _selectedDateTime,
         category: _selectedCategory,
+        userId: usuario!
       );
 
       Navigator.of(context).pop();
@@ -182,6 +185,7 @@ class _ModalCriarTaskState extends State<ModalCriarTask> {
     }
 
     try {
+      final usuario = Provider.of<UserProvider>(context, listen: false).currentUser?.id;
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
 
       if (isEditing) {
@@ -192,6 +196,7 @@ class _ModalCriarTaskState extends State<ModalCriarTask> {
           priority: _priority,
           dueDate: _selectedDateTime,
           category: _selectedCategory,
+          userId: usuario!,
         );
         taskProvider.updateTask(taskAntiga, updatedTask);
       } else {
@@ -201,6 +206,7 @@ class _ModalCriarTaskState extends State<ModalCriarTask> {
           priority: _priority,
           dueDate: _selectedDateTime,
           category: _selectedCategory,
+          userId: usuario!
         );
       }
 

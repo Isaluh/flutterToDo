@@ -7,11 +7,13 @@ import 'package:to_do_app/components/categoria_modal.dart';
 import 'package:to_do_app/components/new_categoria_model.dart';
 import 'package:to_do_app/components/task_card.dart';
 import 'package:to_do_app/pages/login.dart';
+import 'package:to_do_app/providers/categorias.dart';
 import 'package:to_do_app/providers/persistencia/categoria.dart';
 import 'package:to_do_app/components/new_task_model.dart';
 import 'package:to_do_app/providers/persistencia/task.dart'; 
 import 'package:to_do_app/providers/tasks.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
+import 'package:to_do_app/providers/users.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -52,6 +54,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _logout(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final categoriaProvider = Provider.of<CategoriaProvider>(context, listen: false);
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+
+    userProvider.logout(); 
+    categoriaProvider.clearCategorias();
+    taskProvider.clearTasks();
+
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', false);
 
@@ -107,7 +117,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('images/noTasks.png'),
+          Image.asset('assets/images/noTasks.png'),
           const SizedBox(height: 15),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -204,6 +214,7 @@ class _HomePageState extends State<HomePage> {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
         ),
+        toolbarHeight: 70,
       ),
       backgroundColor: Colors.white,
       body: Consumer<TaskProvider>(
@@ -378,7 +389,7 @@ class _HomePageState extends State<HomePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
-              mini: true,
+              // mini: true,
               child: const Icon(Icons.add, color: Colors.white),
             ),
           ),

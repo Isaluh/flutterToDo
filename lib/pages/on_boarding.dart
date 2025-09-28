@@ -18,17 +18,17 @@ class OnboardingPageState extends State<OnboardingPage> {
     {
       "title": "Gerenciar Tarefas",
       "description": "Crie, edite e marque tarefas como concluídas.",
-      "image": "images/icon_tasks.png", 
+      "image": "assets/images/icon_tasks.png", 
     },
     {
       "title": "Criar Rotinas",
       "description": "Estabeleça rotinas diárias para organizar sua vida.",
-      "image": "images/icon_routine.png", 
+      "image": "assets/images/icon_routine.png", 
     },
     {
       "title": "Organizar Categorias",
       "description": "Agrupe suas tarefas em categorias específicas.",
-      "image": "images/icon_organizar.png", 
+      "image": "assets/images/icon_organizar.png", 
     },
     {
       "title": "Bem vindo ao To Do",
@@ -108,21 +108,21 @@ class OnboardingPageState extends State<OnboardingPage> {
 
           if(_currentPage != _onboardingData.length - 1)
           Positioned(
-            top: 40,
-            left: 16,
+            top: 80,
+            left: 20,
             child: GestureDetector(
               onTap: _finishOnboarding,
               child: Text(
                 "Pular",
-                style: TextStyle(fontSize: 16, color: Colors.white54),
+                style: TextStyle(fontSize: 16, color: Colors.white60),
               ),
             ),
           ),
 
           Positioned(
-            bottom: 20,
-            left: 16,
-            right: 16,
+            bottom: 30,
+            left: 20,
+            right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

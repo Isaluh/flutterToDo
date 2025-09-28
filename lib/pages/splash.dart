@@ -72,7 +72,7 @@ class _SplashPageState extends State<SplashPage> {
                   width: MediaQuery.of(context).size.width - 40,
                   child: Text(
                     "Lembre os seus futuros afazeres. Todo dia.",
-                    style: TextStyle(fontSize: 20, color: Colors.white38),
+                    style: TextStyle(fontSize: 20, color: Colors.white54),
                     textAlign: TextAlign.center,
                   ),
                 ),

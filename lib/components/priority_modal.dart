@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ModalPrioridade extends StatefulWidget {
-  final int? currentPriority; 
+  final int? currentPriority;
 
-  const ModalPrioridade({
-    super.key,
-    this.currentPriority,
-  });
+  const ModalPrioridade({super.key, this.currentPriority});
 
   @override
   State<ModalPrioridade> createState() => _ModalPrioridadeState();
@@ -18,7 +15,7 @@ class _ModalPrioridadeState extends State<ModalPrioridade> {
   @override
   void initState() {
     super.initState();
-    _selectedPriority = widget.currentPriority ?? 1; 
+    _selectedPriority = widget.currentPriority ?? 1;
   }
 
   Widget _buildPriorityIcon(int priority) {
@@ -45,13 +42,7 @@ class _ModalPrioridadeState extends State<ModalPrioridade> {
           children: [
             Icon(Icons.flag, color: textColor, size: 15),
             const SizedBox(width: 5),
-            Text(
-              '$priority',
-              style: TextStyle(
-                color: textColor,
-                fontSize: 14,
-              ),
-            ),
+            Text('$priority', style: TextStyle(color: textColor, fontSize: 14)),
           ],
         ),
       ),
@@ -60,7 +51,7 @@ class _ModalPrioridadeState extends State<ModalPrioridade> {
 
   @override
   Widget build(BuildContext context) {
-    final priorities = List<int>.generate(10, (i) => i + 1); 
+    final priorities = List<int>.generate(10, (i) => i + 1);
 
     return AlertDialog(
       backgroundColor: Colors.grey[900],
@@ -73,29 +64,28 @@ class _ModalPrioridadeState extends State<ModalPrioridade> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 4,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
+          Wrap(
+            spacing: 10, 
+            runSpacing: 10, 
+            alignment: WrapAlignment.center,
+
             children: priorities.map((p) {
               return _buildPriorityIcon(p);
             }).toList(),
           ),
-          
+
           const SizedBox(height: 30),
 
           Center(
             child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(null); 
-                },
-                child: Text(
-                  'Cancelar',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                ),
+              onPressed: () {
+                Navigator.of(context).pop(null);
+              },
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
+            ),
           ),
         ],
       ),

@@ -7,22 +7,34 @@ class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
   late Box<Task> _tasksBox;
 
+  String? _currentUserId;
+
   TaskProvider() {
     _initHive();
   }
 
   Future<void> _initHive() async {
-
     _tasksBox = await Hive.openBox<Task>('tasks');
-    _tasks = _tasksBox.values.toList();
-    
+
+    notifyListeners();
+  }
+
+  void loadTasksForUser(String userId) {
+    _currentUserId = userId;
+    _tasks = _tasksBox.values.where((t) => t.userId == userId).toList();
+    notifyListeners();
+  }
+
+  void clearTasks() {
+    _currentUserId = null;
+    _tasks = [];
     notifyListeners();
   }
 
   List<Task> get tasks => _tasks;
 
   List<Task> get pendingTasks => _tasks.where((task) => !task.isDone).toList();
-  
+
   List<Task> get completedTasks => _tasks.where((task) => task.isDone).toList();
 
   void addTask({
@@ -31,13 +43,22 @@ class TaskProvider with ChangeNotifier {
     int priority = 0,
     DateTime? dueDate,
     Categoria? category,
+    required String userId,
   }) {
+    if (_currentUserId != userId) {
+      print(
+        "Erro: Tentativa de adicionar tarefa para um usuário diferente do logado.",
+      );
+      return;
+    }
+
     final newTask = Task.create(
       title: title,
       description: description,
       priority: priority,
       dueDate: dueDate,
       category: category,
+      userId: userId,
     );
 
     _tasksBox.add(newTask);
@@ -46,35 +67,41 @@ class TaskProvider with ChangeNotifier {
   }
 
   void toggleTaskStatus(Task task) {
-    final index = _tasks.indexOf(task);
+    final key = task.key;
 
-    if (index != -1) {
+    if (key != null) {
       task.toggleDone();
-      _tasksBox.putAt(index, task);
+      _tasksBox.put(key, task);
 
       notifyListeners();
     }
   }
 
   void removeTask(Task task) {
-    final index = _tasks.indexOf(task);
-    
-    if (index != -1) {
-      _tasksBox.deleteAt(index);
-      _tasks.removeAt(index);
+    final key = task.key;
+
+    if (key != null) {
+      _tasksBox.delete(key);
+      _tasks.remove(task);
+
       notifyListeners();
     }
   }
 
   void updateTask(Task oldTask, Task updatedTask) {
-    final index = _tasks.indexOf(oldTask);
+    final key = oldTask.key;
 
-    if (index != -1) {
-      _tasks[index] = updatedTask;
-      _tasksBox.putAt(index, updatedTask);
+    if (key != null) {
+      _tasksBox.put(key, updatedTask);
+
+      final indexLocal = _tasks.indexOf(oldTask);
+      if (indexLocal != -1) {
+        _tasks[indexLocal] = updatedTask;
+      }
+
       notifyListeners();
     } else {
-      print('Erro ao atualizar: Tarefa não encontrada.');
+      print('Erro ao atualizar: Tarefa não tem uma chave Hive válida.');
     }
   }
 }

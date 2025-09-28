@@ -37,6 +37,7 @@ dependencies:
   flutter_iconpicker: ^4.0.1
   hive: ^2.0.4 
   hive_flutter: ^1.1.0
+  uuid: ^4.0.0
   flutter_localizations:
     sdk: flutter 
 

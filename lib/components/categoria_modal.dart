@@ -59,49 +59,57 @@ class ModalCategoria extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            categorias.isNotEmpty
-              ? GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  children: categorias.map((categoria) {
-                    return _buildCategoryIcon(context, categoria);
-                  }).toList(),
+      content: SizedBox( 
+        width: MediaQuery.of(context).size.width, 
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              categorias.isNotEmpty
+                ? ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.45, 
+                    ),
+                    child: GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(), 
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      children: categorias.map((categoria) {
+                        return _buildCategoryIcon(context, categoria);
+                      }).toList(),
+                    ),
+                  )
+                : const Text(
+                    "Sem categorias criadas.",
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+              const SizedBox(height: 20),
+              buttonNewCategoria ?
+                ElevatedButtonComponent(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onPressedNewCategory();
+                  },
+                  text: 'Criar categoria',
+                  color: Colors.white,
+                  textColor: Colors.black,
+                  minimumSize: const Size(double.infinity, 0),
                 )
-              : const Text(
-                  "Sem categorias criadas.",
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                  textAlign: TextAlign.center,
+              :
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(null); 
+                  },
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                  ),
                 ),
-            const SizedBox(height: 20),
-            buttonNewCategoria ?
-              ElevatedButtonComponent(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  onPressedNewCategory();
-                },
-                text: 'Criar categoria',
-                color: Colors.white,
-                textColor: Colors.black,
-                minimumSize: const Size(double.infinity, 0),
-              )
-            :
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(null); 
-                },
-                child: Text(
-                  'Cancelar',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

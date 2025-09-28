@@ -6,6 +6,8 @@ class CategoriaProvider with ChangeNotifier {
   List<Categoria> _categorias = []; 
   late Box<Categoria> _categoriasBox;
 
+  String? _currentUserId; 
+
   CategoriaProvider() {
     _initHive();
   }
@@ -13,47 +15,66 @@ class CategoriaProvider with ChangeNotifier {
   Future<void> _initHive() async {
     _categoriasBox = await Hive.openBox<Categoria>('categorias');
 
-    _categorias = _categoriasBox.values.toList();
+    notifyListeners();
+  }
+
+  void loadCategoriasForUser(String userId) {
+    _currentUserId = userId;
+    _categorias = _categoriasBox.values
+        .where((c) => c.userId == userId) 
+        .toList();
+    notifyListeners();
+  }
+  
+  void clearCategorias() {
+    _currentUserId = null;
+    _categorias = [];
     notifyListeners();
   }
 
   List<Categoria> get categories => _categorias;
 
-  void addCategoria(String name, IconData icon, Color color) {
-    final novaCategoria = Categoria.create(name: name, icon: icon, color: color);
+  void addCategoria(String name, IconData icon, Color color, String userId) {
+    if (_currentUserId != userId) {
+      print("Erro: Tentativa de adicionar categoria para um usuário diferente do logado.");
+      return; 
+    }
+    
+    final novaCategoria = Categoria.create(name: name, icon: icon, color: color, userId: userId); 
     
     _categoriasBox.add(novaCategoria); 
     _categorias.add(novaCategoria);
     notifyListeners();
   }
 
+
   void updateCategoria(Categoria categoriaAntiga, Categoria categoriaAtualizada) {
-    final index = _categorias.indexOf(categoriaAntiga);
+    final key = categoriaAntiga.key;
 
-    if (index != -1) {
-      _categorias[index] = categoriaAtualizada;
-      _categoriasBox.putAt(index, categoriaAtualizada);
+    if (key != null) {
+        _categoriasBox.put(key, categoriaAtualizada);
 
-      notifyListeners();
+        final indexLocal = _categorias.indexOf(categoriaAntiga);
+        if (indexLocal != -1) {
+            _categorias[indexLocal] = categoriaAtualizada;
+        }
+
+        notifyListeners();
     } else {
-      final indexByName = _categorias.indexWhere((c) => c.name == categoriaAntiga.name && c.color == categoriaAntiga.color);
-      if (indexByName != -1) {
-          _categorias[indexByName] = categoriaAtualizada;
-          _categoriasBox.putAt(indexByName, categoriaAtualizada);
-          notifyListeners();
-      } else {
-          print("Erro: Categoria não encontrada para atualização.");
-      }
+        print("Erro: Categoria Antiga não tem uma chave Hive válida. Não foi possível atualizar.");
     }
-  }
+}
 
-  void removeCategoria(Categoria categoria) {
-    final index = _categorias.indexOf(categoria);
-    
-    if (index != -1) {
-      _categoriasBox.deleteAt(index);
-      _categorias.removeAt(index);
-      notifyListeners();
+void removeCategoria(Categoria categoria) {
+    final key = categoria.key;
+
+    if (key != null) {
+        _categoriasBox.delete(key); 
+        _categorias.remove(categoria); 
+        
+        notifyListeners();
+    } else {
+        print("Erro: Categoria não tem uma chave Hive válida. Não foi possível remover.");
     }
-  }
+}
 }

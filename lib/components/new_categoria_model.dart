@@ -6,6 +6,7 @@ import 'package:to_do_app/components/botoes.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:to_do_app/providers/categorias.dart';
 import 'package:to_do_app/providers/persistencia/categoria.dart';
+import 'package:to_do_app/providers/users.dart';
 
 class ModalCriarCategoria extends StatefulWidget {
   final Categoria? categoriaParaEditar; 
@@ -127,16 +128,18 @@ class _ModalCriarCategoriaState extends State<ModalCriarCategoria> {
     }
 
     try {
+      final usuario = Provider.of<UserProvider>(context, listen: false).currentUser?.id;
       if (isEditing) {
         final categoriaAntiga = widget.categoriaParaEditar!;
         final categoriaAtualizada = Categoria.create(
           name: nome,
           icon: iconeData,
-          color: cor,
+          color: cor, 
+          userId: usuario!,
         );
         Provider.of<CategoriaProvider>(context, listen: false).updateCategoria(categoriaAntiga, categoriaAtualizada);
       } else {
-        Provider.of<CategoriaProvider>(context, listen: false).addCategoria(nome, iconeData, cor);
+        Provider.of<CategoriaProvider>(context, listen: false).addCategoria(nome, iconeData, cor, usuario!);
       }
       Navigator.of(context).pop();
     } catch (e) {
